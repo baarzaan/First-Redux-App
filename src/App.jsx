@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { routes } from "./routes/Routes";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { getUserOnLoad } from "./redux/actions/authAction";
+import Header from "./components/Header";
+import { getBlogs } from "./redux/actions/blogAction";
+import PrivateRoutes from "./routes/PrivateRoutes";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getUserOnLoad());
+    dispatch(getBlogs());
+  }, [dispatch]);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+      <Header />
+      <Routes>
+        {routes.map((route) => (
+          <Route
+            key={route.path}
+            path={route.path}
+            element={
+              route.isPrivate ? (
+                <PrivateRoutes>{route.element}</PrivateRoutes>
+              ) : (
+                route.element
+              )
+            }
+          />
+        ))}
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

@@ -32,7 +32,7 @@ const Header = () => {
             </button>
 
             <Link to="/">
-              <h1 className="text-3xl font-bold">LOGO</h1>
+              <h1 className="text-3xl font-bold">BBLOG</h1>
             </Link>
           </div>
 

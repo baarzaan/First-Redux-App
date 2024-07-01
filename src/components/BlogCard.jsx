@@ -20,7 +20,9 @@ const BlogCard = ({ blog }) => {
   const likes = useSelector(
     (state) => state.toggleLikeReducer.likes[blog.id] || []
   );
-  const comments = useSelector((state) => state.getComments.comments || []);
+  const comments = useSelector(
+    (state) => state.getCommentsReducer.comments[blog.id] || []
+  );
 
   useEffect(() => {
     if (blog) {
@@ -42,8 +44,11 @@ const BlogCard = ({ blog }) => {
     Array.isArray(likes) &&
     likes.some((like) => like.user.email === user?.email);
 
+  const createdAtDate = blog.createdAt.toDate();
+  const formattedDate = createdAtDate.toLocaleString();
+
   return (
-    <div className="relative flex px-2 py-4 shadow-lg rounded-md container mx-auto max-w-[600px]">
+    <div className="blog-card relative flex px-2 py-4 shadow-lg rounded-md container mx-auto max-w-[600px]">
       <img
         src={blog.user.userImageURL}
         className="w-10 h-10 object-cover rounded-full"
@@ -54,25 +59,24 @@ const BlogCard = ({ blog }) => {
         <div className="flex justify-between items-centerw w-full">
           <div className="flex flex-col gap-0.5">
             <strong>{blog.user.fullName}</strong>
-            <p className="text-[#969393]/75">{Date(blog.createdAt)}</p>
+            <p className="text-[#969393]/75">{formattedDate}</p>
           </div>
 
-          {blog.user.email === user.email && (
-            <div className="">
-              <button
-                onClick={() => handleSelectedBlog(blog)}
-                className="flex justify-center items-center transform transition-all ease-in-out duration-300 hover:bg-[#969393]/15 rounded-full w-7 h-7 active:scale-95"
-              >
-                <IoIosMore size={25} />
-              </button>
+          {blog.user.email === user?.email && (
+            <button
+              title="More"
+              onClick={() => handleSelectedBlog(blog)}
+              className="flex justify-center items-center transform transition-all ease-in-out duration-300 hover:bg-[#969393]/15 rounded-full w-7 h-7 active:scale-95"
+            >
+              <IoIosMore size={22} />
+            </button>
+          )}
 
-              {showPostActions && (
-                <PostActions
-                  setShowPostActions={setShowPostActions}
-                  blog={selectedBlog}
-                />
-              )}
-            </div>
+          {showPostActions && (
+            <PostActions
+              setShowPostActions={setShowPostActions}
+              blog={selectedBlog}
+            />
           )}
         </div>
 
@@ -92,28 +96,34 @@ const BlogCard = ({ blog }) => {
           <button
             title={isLiked ? "Unlike" : "Like"}
             onClick={() => dispatch(toggleLike(blog, user))}
-            className="transform transition-all ease-in-out duration-300 active:scale-95 hover:bg-[#969393]/15 p-1 hover:rounded-full"
+            className="flex justify-center items-center gap-1 transform transition-all ease-in-out duration-300 active:scale-95 hover:bg-[#969393]/15 p-1 hover:rounded-full"
           >
-            {isLiked ? (
-              <HiHeart size={25} color="red" />
-            ) : (
-              <HiOutlineHeart size={25} />
-            )}
+            <p className="">
+              {isLiked ? (
+                <HiHeart size={25} color="red" />
+              ) : (
+                <HiOutlineHeart size={25} />
+              )}
+            </p>
+
+            <p title={`${likes.length} likes`} className="text-gray-400">
+              {likes.length}
+            </p>
           </button>
 
           <Link
-            title="Comment"
+            title="Comments"
             to={`/blog/${blog.id}`}
-            className="transform transition-all ease-in-out duration-300 active:scale-95 hover:bg-[#969393]/15 p-1 hover:rounded-full"
+            className="flex justify-center items-center gap-1 transform transition-all ease-in-out duration-300 active:scale-95 hover:bg-[#969393]/15 p-1 hover:rounded-full"
           >
-            <FaRegComment size={25} />
-          </Link>
-        </div>
+            <p to={`/blog/${blog.id}`} className="">
+              <FaRegComment size={25} />
+            </p>
 
-        <div className="flex justify-center items-center gap-3 text-[#969393]">
-          <p>{likes.length} likes</p>
-          <p>.</p>
-          <p>{comments.length} comments</p>
+            <p title={`${comments.length} comments`} className="text-gray-400">
+              {comments.length}
+            </p>
+          </Link>
         </div>
       </div>
     </div>

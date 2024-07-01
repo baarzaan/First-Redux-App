@@ -2,6 +2,9 @@ import {
   ADD_COMMENT_FAIL,
   ADD_COMMENT_REQUEST,
   ADD_COMMENT_SUCCESS,
+  BLOG_COMMENT_LIKE_FAIL,
+  BLOG_COMMENT_LIKE_REQUEST,
+  BLOG_COMMENT_LIKE_SUCCESS,
   BLOG_CREATE,
   BLOG_DELETE,
   BLOG_EDIT,
@@ -11,6 +14,15 @@ import {
   BLOG_LIKE_SUCCESS,
   BLOG_REQUEST,
   BLOG_SUCCESS,
+  DELETE_BLOG_COMMENT_FAIL,
+  DELETE_BLOG_COMMENT_REQUEST,
+  DELETE_BLOG_COMMENT_SUCCESS,
+  EDIT_BLOG_COMMENT_FAIL,
+  EDIT_BLOG_COMMENT_REQUEST,
+  EDIT_BLOG_COMMENT_SUCCESS,
+  GET_BLOG_COMMENT_LIKE_FAIL,
+  GET_BLOG_COMMENT_LIKE_REQUEST,
+  GET_BLOG_COMMENT_LIKE_SUCCESS,
   GET_BLOG_LIKES_FAIL,
   GET_BLOG_LIKES_REQUEST,
   GET_BLOG_LIKES_SUCCESS,
@@ -23,7 +35,8 @@ const initialState = {
   loading: false,
   blogs: [],
   likes: {},
-  comments: [],
+  comments: {},
+  commentLikes: {},
   error: null,
 };
 
@@ -178,10 +191,14 @@ export const addCommentReducer = (state = initialState, action) => {
       };
 
     case ADD_COMMENT_SUCCESS:
+      const { blogId, comments } = action.payload;
       return {
         ...state,
         loading: false,
-        comments: action.payload,
+        comments: {
+          ...state.comments,
+          [blogId]: comments,
+        },
       };
 
     case ADD_COMMENT_FAIL:
@@ -208,7 +225,10 @@ export const getCommentsReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        comments: action.payload,
+        comments: {
+          ...state.comments,
+          [action.payload.blogId]: action.payload.comments,
+        },
       };
 
     case GET_COMMENT_FAIL:
@@ -220,5 +240,100 @@ export const getCommentsReducer = (state = initialState, action) => {
 
     default:
       return { ...state };
+  }
+};
+
+export const toggleCommentLikeReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case GET_BLOG_COMMENT_LIKE_REQUEST:
+    case BLOG_COMMENT_LIKE_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case GET_BLOG_COMMENT_LIKE_SUCCESS:
+    case BLOG_COMMENT_LIKE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        commentLikes: {
+          [action.payload.blogId]: {
+            ...state.commentLikes[action.payload.blogId],
+            [action.payload.commentId]: action.payload.likes,
+          },
+        },
+      };
+
+    case GET_BLOG_COMMENT_LIKE_FAIL:
+    case BLOG_COMMENT_LIKE_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+
+    default:
+      return { ...state };
+  }
+};
+
+export const deleteBlogCommentReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case DELETE_BLOG_COMMENT_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case DELETE_BLOG_COMMENT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        comments: state.comments.filter(
+          (comment) => comment.id !== action.payload.commentId
+        ),
+      };
+
+    case DELETE_BLOG_COMMENT_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+
+    default:
+      return { ...state };
+  }
+};
+
+export const editBlogCommentReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case EDIT_BLOG_COMMENT_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case EDIT_BLOG_COMMENT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        comments: state.comments.map((comment) =>
+          comment.id == action.payload.commentId
+            ? { ...comment, comment: action.payload.commentData.comment }
+            : comment
+        ),
+      };
+
+    case EDIT_BLOG_COMMENT_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+
+    default:
+      return state;
   }
 };

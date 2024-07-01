@@ -1,7 +1,7 @@
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import { forgotPasswordReducer, getUserReducer, loginReducer, logoutReducer, registerReducer } from "../redux/reducers/authReducer";
 import { thunk } from "redux-thunk";
-import { addCommentReducer, createBlogReducer, deleteBlogReducer, editBlogReducer, getBlogsReducer, getCommentsReducer, toggleLikeReducer } from "../redux/reducers/blogReducer";
+import { addCommentReducer, createBlogReducer, deleteBlogCommentReducer, deleteBlogReducer, editBlogCommentReducer, editBlogReducer, getBlogsReducer, getCommentsReducer, toggleCommentLikeReducer, toggleLikeReducer } from "../redux/reducers/blogReducer";
 
 const rootReducer = combineReducers({
     auth: combineReducers({
@@ -18,7 +18,10 @@ const rootReducer = combineReducers({
     editBlog: editBlogReducer,
     toggleLikeReducer: toggleLikeReducer,
     addCommentReducer: addCommentReducer,
-    getComments: getCommentsReducer,
+    getCommentsReducer: getCommentsReducer,
+    toggleCommentLikeReducer: toggleCommentLikeReducer,
+    deleteBlogCommentReducer: deleteBlogCommentReducer,
+    editBlogCommentReducer: editBlogCommentReducer,
 })
 
 const store = createStore(rootReducer, applyMiddleware(thunk));

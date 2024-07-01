@@ -12,7 +12,9 @@ const BlogPage = () => {
   const { blogs } = useSelector((state) => state.blogs);
   const [blog, setBlog] = useState(null);
   const [comment, setComment] = useState("");
-  const comments = useSelector((state) => state.getComments.comments);
+  const comments = useSelector(
+    (state) => state.getCommentsReducer.comments[blogId] || []
+  );
 
   const getBlog = () => {
     const foundBlog = blogs.find((blog) => blog.id == blogId);
@@ -60,7 +62,9 @@ const BlogPage = () => {
                     disabled={comment.trim() == ""}
                     onClick={() => {
                       dispatch(
-                        addComment(blog.id, {
+                        addComment({
+                          blogId: blog.id,
+                          blogAuthor: blog.user.email,
                           comment,
                           user,
                           addedAt: new Date(),
@@ -77,8 +81,12 @@ const BlogPage = () => {
             </div>
 
             {comments.map((comment) => (
-                <CommentCard key={comment.id} comment={comment} />
-              ))}
+              <CommentCard
+                key={comment.id}
+                comment={comment}
+                blogId={blog.id}
+              />
+            ))}
           </div>
         </div>
       ) : (

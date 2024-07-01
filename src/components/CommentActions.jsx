@@ -1,32 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CgClose } from "react-icons/cg";
 import { FiEdit2, FiTrash } from "react-icons/fi";
 import { useDispatch } from "react-redux";
-import { deleteBlog, editBlog } from "../redux/actions/blogAction";
+import {
+  deleteBlogComment,
+  editBlogComment,
+} from "../redux/actions/blogAction";
 
-const PostActions = ({ setShowPostActions, blog }) => {
+const CommentActions = ({ setShowCommentActions, selectedComment }) => {
   const dispatch = useDispatch();
   const [showEditModal, setShowEditModal] = useState(false);
-  const [title, setTitle] = useState(blog.title);
-  const [body, setBody] = useState(blog.body);
+  const [comment, setComment] = useState(selectedComment.comment.comment);
 
-  const handleEditBlog = (e) => {
+  const handleEditComment = (e) => {
     e.preventDefault();
 
     try {
-      if (title.trim() != "" && body.trim() != "") {
-        const blogData = {
-          id: blog.id,
-          title,
-          body,
+      if (comment.trim() != "") {
+        const commentData = {
+          id: selectedComment.comment.id,
+          comment,
         };
 
-        dispatch(editBlog(blogData));
-        alert("Blog edited successfully");
+        dispatch(editBlogComment(selectedComment.blogId, commentData));
+        alert("Comment edited successfully");
         setShowEditModal(false);
-        setShowPostActions(false);
+        setShowCommentActions(false);
       } else {
-        return alert("Please fill all inputs!");
+        return alert("Please enter your comment");
       }
     } catch (error) {
       console.error(error.message);
@@ -39,7 +40,7 @@ const PostActions = ({ setShowPostActions, blog }) => {
         <div className="absolute top-9 right-0 flex flex-col justify-start items-start gap-3 bg-white p-2 rounded-md shadow-md">
           <button
             title="Close"
-            onClick={() => setShowPostActions(false)}
+            onClick={() => setShowCommentActions(false)}
             className="flex justify-start items-center transform transition-all ease-in-out duration-300 active:scale-95 hover:bg-[#969393]/15 p-2 hover:rounded-md gap-2"
           >
             <CgClose size={20} />
@@ -54,7 +55,14 @@ const PostActions = ({ setShowPostActions, blog }) => {
           </button>
 
           <button
-            onClick={() => dispatch(deleteBlog(blog.id))}
+            onClick={() =>
+              dispatch(
+                deleteBlogComment(
+                  selectedComment.blogId,
+                  selectedComment.comment.id
+                )
+              )
+            }
             className="flex justify-start items-center transform transition-all ease-in-out duration-300 active:scale-95 hover:bg-[#969393]/15 p-2 hover:rounded-md gap-2"
           >
             <FiTrash />
@@ -75,30 +83,21 @@ const PostActions = ({ setShowPostActions, blog }) => {
               >
                 <CgClose size={20} />
               </button>
-              <h3 className="text-lg font-bold">Edit blog</h3>
+              <h3 className="text-lg font-bold">Edit comment</h3>
               <span></span>
             </div>
 
             <form className="flex flex-col justify-center items-center gap-3">
-              <input
-                type="text"
-                placeholder="Title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                className="edit-content w-[300px] border border-[#e4e4e5] rounded-md p-2"
-              />
-
               <textarea
-                placeholder="Body"
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
+                placeholder="Comment"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
                 required
                 className="edit-content w-[300px] border border-[#e4e4e5] rounded-md p-2"
               />
 
               <button
-                onClick={handleEditBlog}
+                onClick={handleEditComment}
                 className="edit-content text-white w-[300px] p-2 rounded-md bg-blue-700 hover:bg-blue-800 active:scale-95 transform transition-all ease-in-out duration-300"
               >
                 Edit
@@ -111,4 +110,4 @@ const PostActions = ({ setShowPostActions, blog }) => {
   );
 };
 
-export default PostActions;
+export default CommentActions;

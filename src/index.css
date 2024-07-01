@@ -17,3 +17,19 @@ body {
 body.modal-active {
   overflow-y: hidden;
 }
+
+@media (max-width: 450px) {
+  .blog-card {
+    width: 95%;
+  }
+}
+
+@media (max-width: 380px) {
+  .edit {
+    width: 95%;
+  }
+
+  .edit-content {
+    width: 90%;
+  }
+}

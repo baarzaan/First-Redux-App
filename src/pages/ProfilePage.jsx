@@ -16,6 +16,8 @@ const ProfilePage = () => {
     navigate("/login");
   };
 
+  const userBlogs = blogs.filter((blog) => blog.user.email == user?.email);
+
   return (
     <>
       {user ? (
@@ -44,21 +46,20 @@ const ProfilePage = () => {
             </div>
 
             <div className="flex flex-col justify-center items-center gap-4">
-              <h2 className="text-xl font-bold">My blogs</h2>
+              <h2 className="text-xl font-bold">
+                My blogs ({userBlogs.length})
+              </h2>
 
               <div className="flex flex-col justify-center items-center gap-3">
-                {blogs.filter((blog) => blog.user.email == user.email).length ==
-                  0 && (
+                {userBlogs.length == 0 && (
                   <h3 className="text-lg font-semibold">
                     You don't have any blogs yet.
                   </h3>
                 )}
 
-                {blogs
-                  .filter((blog) => blog.user.email == user.email)
-                  .map((blog) => (
-                    <BlogCard key={blog.id} blog={blog} />
-                  ))}
+                {userBlogs.map((blog) => (
+                  <BlogCard key={blog.id} blog={blog} />
+                ))}
               </div>
             </div>
           </div>

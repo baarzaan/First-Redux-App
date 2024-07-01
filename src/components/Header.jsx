@@ -20,7 +20,7 @@ const Header = () => {
     <>
       {user ? (
         <header
-          className="sticky top-0 left-0 w-full h-12 flex justify-between items-center px-2 shadow-md"
+          className="w-full h-12 flex justify-between items-center px-2 shadow-md"
           style={{ zIndex: 999 }}
         >
           <div className="flex justify-center items-center gap-2">
@@ -49,7 +49,7 @@ const Header = () => {
           </nav>
 
           {openNav && (
-            <nav className="sm:hidden flex w-full">
+            <nav className="sm:hidden flex" style={{ zIndex: 999 }}>
               <ul className="absolute top-12 left-0 w-full p-2 bg-white flex flex-col justify-center items-center gap-5">
                 <li className="transfom transition-all ease-in-out duration-300 hover:text-[#969393] active:scale-95">
                   <Link to="/" onClick={() => setOpenNav(false)}>
